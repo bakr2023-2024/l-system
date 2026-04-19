@@ -18,14 +18,17 @@ int main(int argc, char **argv)
     /*
         we apply rotation matrix to len vector <0,L> to get <-L*sin(theta),L*cos(theta)>
         then add the vector to start position to get end position <x - L*sin(theta), y - L*cos(theta)>
-        # we subtract L*cos(theta) from y since in pixel coordinates, y-axis moves down unlike 2d coordinate system
+        note: we subtract L*cos(theta) from y since in pixel coordinates, y-axis moves down
     */
+    float L = 10;
     float turn = M_PI / 4;
+    float scale = 1.0f / sqrtf(2);
     InitWindow(sw, sh, "L-system");
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ENTER))
         {
+            L *= scale;
             string buffer = "";
             for (char ch : curr)
             {
@@ -40,7 +43,6 @@ int main(int argc, char **argv)
         }
         Vector2 pos{sw / 2, sh};
         float angle = 0.0f;
-        float L = 1;
         stack<State> s;
         BeginDrawing();
         ClearBackground(BLACK);
