@@ -1,14 +1,11 @@
 #include <raylib.h>
-#include <string>
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <stack>
+#include "utils.hpp"
+using namespace std;
 struct State
 {
     Vector2 pos;
     float angle;
 };
-using namespace std;
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -20,42 +17,33 @@ int main(int argc, char **argv)
         then add the vector to start position to get end position <x - L*sin(theta), y - L*cos(theta)>
         note: we subtract L*cos(theta) from y since in pixel coordinates, y-axis moves down
     */
-    float L = 10;
-    float turn = M_PI / 4;
-    float scale = 1.0f / sqrtf(2);
+    float L = 20;
+    float turn = 2 * M_PI / 3.0;
     InitWindow(sw, sh, "L-system");
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ENTER))
         {
-            L *= scale;
+            L *= 0.9f;
             string buffer = "";
             for (char ch : curr)
             {
-                if (ch == '1')
-                    buffer += "11";
-                else if (ch == '0')
-                    buffer += "1[-0]+0";
+                if (ch == 'F')
+                    buffer += "F-G+F+G-F";
+                else if (ch == 'G')
+                    buffer += "GG";
                 else
                     buffer += ch;
             }
             curr = buffer;
         }
-        Vector2 pos{sw / 2, sh};
+        Vector2 pos{10, sh};
         float angle = 0.0f;
-        stack<State> s;
         BeginDrawing();
         ClearBackground(BLACK);
         for (char ch : curr)
         {
-            if (ch == '0')
-            {
-                Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
-                DrawLineV(pos, newPos, WHITE);
-                DrawEllipse(newPos.x, newPos.y, 2, 2, GREEN);
-                pos = newPos;
-            }
-            else if (ch == '1')
+            if (ch == 'F' || ch == 'G')
             {
                 Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
                 DrawLineV(pos, newPos, WHITE);
@@ -68,17 +56,6 @@ int main(int argc, char **argv)
             else if (ch == '+')
             {
                 angle += turn;
-            }
-            else if (ch == '[')
-            {
-                s.push({pos, angle});
-            }
-            else if (ch == ']')
-            {
-                State state = s.top();
-                pos = state.pos;
-                angle = state.angle;
-                s.pop();
             }
         }
         EndDrawing();
