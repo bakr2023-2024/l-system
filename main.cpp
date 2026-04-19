@@ -35,7 +35,7 @@ int main(int argc, char **argv)
                 if (ch == '1')
                     buffer += "11";
                 else if (ch == '0')
-                    buffer += "1[0]0";
+                    buffer += "1[-0]+0";
                 else
                     buffer += ch;
             }
@@ -61,16 +61,23 @@ int main(int argc, char **argv)
                 DrawLineV(pos, newPos, WHITE);
                 pos = newPos;
             }
+            else if (ch == '-')
+            {
+                angle -= turn;
+            }
+            else if (ch == '+')
+            {
+                angle += turn;
+            }
             else if (ch == '[')
             {
                 s.push({pos, angle});
-                angle -= turn;
             }
             else if (ch == ']')
             {
                 State state = s.top();
                 pos = state.pos;
-                angle = state.angle + turn;
+                angle = state.angle;
                 s.pop();
             }
         }
