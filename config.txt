@@ -1,0 +1,11 @@
+[variables]
+F=DRAW
+G=DRAW
+
+[rules]
+F=F-G+F+G-F
+G=GG
+
+[parameters]
+axiom=F-G-G
+angle=120

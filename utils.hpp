@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <stack>
+#include <unordered_map>
+#include <fstream>
 enum Action
 {
     DRAW,
@@ -13,3 +15,74 @@ enum Action
     SAVE,
     RESTORE
 };
+Action strToAction(const std::string &str)
+{
+    if (str == "DRAW")
+        return DRAW;
+    if (str == "MOVE")
+        return MOVE;
+    if (str == "STAY")
+        return STAY;
+    if (str == "CW")
+        return CW;
+    if (str == "ACW")
+        return ACW;
+    if (str == "SAVE")
+        return SAVE;
+    if (str == "RESTORE")
+        return RESTORE;
+    return STAY;
+}
+struct Parameters
+{
+    std::unordered_map<char, Action> variables;
+    std::unordered_map<char, std::string> rules;
+    std::string axiom;
+    float angle = 0.0f;
+};
+bool parse(std::string filename, Parameters &params)
+{
+    std::ifstream file(filename);
+    if (!file)
+        return false;
+    std::string str;
+    while (std::getline(file, str))
+    {
+        if (str == "[variables]")
+        {
+            while (std::getline(file, str) && !str.empty())
+            {
+                int delimIdx = str.find('=');
+                if (delimIdx != std::string::npos)
+                    params.variables.emplace(str.substr(0, delimIdx)[0], strToAction(str.substr(delimIdx + 1)));
+            }
+        }
+        if (str == "[rules]")
+        {
+            while (std::getline(file, str) && !str.empty())
+            {
+                int delimIdx = str.find('=');
+                if (delimIdx != std::string::npos)
+                    params.rules.emplace(str.substr(0, delimIdx)[0], str.substr(delimIdx + 1));
+            }
+        }
+        if (str == "[parameters]")
+        {
+            while (std::getline(file, str) && !str.empty())
+            {
+                int delimIdx = str.find('=');
+                if (delimIdx != std::string::npos)
+                {
+                    std::string key = str.substr(0, delimIdx);
+                    std::string val = str.substr(delimIdx + 1);
+                    if (key == "axiom")
+                        params.axiom = val;
+                    else if (key == "angle")
+                        params.angle = std::stof(val);
+                }
+            }
+        }
+    }
+    file.close();
+    return true;
+}
