@@ -47,11 +47,11 @@ int main(int argc, char **argv)
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
     InitWindow(sw, sh, "L-system");
+    SetTraceLogLevel(LOG_NONE);
     RenderTexture2D target = LoadRenderTexture(sw, sh);
     bool needsRedraw = false;
     Color backgroundColor = hexToRGBA(params.background);
     Color foregroundColor = hexToRGBA(params.foreground);
-    std::stack<State> stack;
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ENTER))
@@ -60,11 +60,12 @@ int main(int argc, char **argv)
             std::string buffer = "";
             for (char ch : curr)
                 buffer += params.rules.contains(ch) ? params.rules.at(ch) : std::string{ch};
-            curr = buffer;
+            curr = std::move(buffer);
             needsRedraw = true;
         }
         if (needsRedraw)
         {
+            std::stack<State> stack;
             Vector2 pos{params.start_x, params.start_y};
             float angle = params.start_angle;
             BeginTextureMode(target);
