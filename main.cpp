@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     */
     float L = params.length;
     float turn = params.turn * M_PI / 180;
+    float start_angle = params.start_angle * M_PI / 180;
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
     InitWindow(sw, sh, "L-system");
@@ -67,7 +68,7 @@ int main(int argc, char **argv)
         {
             std::stack<State> stack;
             Vector2 pos{params.start_x, params.start_y};
-            float angle = params.start_angle;
+            float angle = start_angle;
             BeginTextureMode(target);
             ClearBackground(backgroundColor);
             for (char ch : curr)
