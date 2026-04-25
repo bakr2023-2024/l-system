@@ -38,7 +38,9 @@ struct Parameters
     std::unordered_map<char, Action> variables;
     std::unordered_map<char, std::string> rules;
     std::string axiom;
-    float angle = 0.0f;
+    float turn = 0.0f;
+    float start_x = 0.0f, start_y = 0.0f;
+    float start_angle = 0.0f;
 };
 bool parse(std::string filename, Parameters &params)
 {
@@ -77,8 +79,14 @@ bool parse(std::string filename, Parameters &params)
                     std::string val = str.substr(delimIdx + 1);
                     if (key == "axiom")
                         params.axiom = val;
-                    else if (key == "angle")
-                        params.angle = std::stof(val);
+                    else if (key == "turn")
+                        params.turn = std::stof(val);
+                    else if (key == "start_angle")
+                        params.start_angle = std::stof(val);
+                    else if (key == "start_x")
+                        params.start_x = std::stof(val);
+                    else if (key == "start_y")
+                        params.start_y = std::stof(val);
                 }
             }
         }
