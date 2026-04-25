@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         then add the vector to start position to get end position <x - L*sin(theta), y - L*cos(theta)>
         note: we subtract L*cos(theta) from y since in pixel coordinates, y-axis moves down
     */
-    float L = 20;
+    float L = params.length;
     float turn = params.turn * M_PI / 180;
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     {
         if (IsKeyPressed(KEY_ENTER))
         {
-            L *= 0.75f;
+            L *= params.scale;
             std::string buffer = "";
             for (char ch : curr)
                 buffer += params.rules.contains(ch) ? params.rules.at(ch) : std::string{ch};
