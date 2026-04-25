@@ -37,8 +37,6 @@ int main(int argc, char **argv)
     float turn = params.turn * M_PI / 180;
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
-    params.start_x = sw / 2;
-    params.start_y = sh;
     InitWindow(sw, sh, "L-system");
     std::stack<State> stack;
     while (!WindowShouldClose())
