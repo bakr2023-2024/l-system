@@ -6,6 +6,15 @@ struct State
     Vector2 pos;
     float angle;
 };
+Color hexToRGBA(unsigned long hex)
+{
+    return Color{
+        (unsigned char)((hex >> 24) & 0xff),
+        (unsigned char)((hex >> 16) & 0xff),
+        (unsigned char)((hex >> 8) & 0xff),
+        (unsigned char)((hex) & 0xff),
+    };
+}
 int main(int argc, char **argv)
 {
     if (argc != 2 || !std::string(argv[1]).ends_with(".txt"))
@@ -38,12 +47,14 @@ int main(int argc, char **argv)
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
     InitWindow(sw, sh, "L-system");
+    Color backgroundColor = hexToRGBA(params.background);
+    Color foregroundColor = hexToRGBA(params.foreground);
     std::stack<State> stack;
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ENTER))
         {
-            L *= 0.9f;
+            L *= 0.75f;
             std::string buffer = "";
             for (char ch : curr)
                 buffer += params.rules.contains(ch) ? params.rules.at(ch) : std::string{ch};
@@ -52,7 +63,7 @@ int main(int argc, char **argv)
         Vector2 pos{params.start_x, params.start_y};
         float angle = params.start_angle;
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(backgroundColor);
         for (char ch : curr)
         {
             if (!params.variables.contains(ch))
@@ -61,7 +72,7 @@ int main(int argc, char **argv)
             if (result == DRAW)
             {
                 Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
-                DrawLineV(pos, newPos, WHITE);
+                DrawLineV(pos, newPos, foregroundColor);
                 pos = newPos;
             }
             else if (result == MOVE)
