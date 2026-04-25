@@ -47,6 +47,8 @@ int main(int argc, char **argv)
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
     InitWindow(sw, sh, "L-system");
+    RenderTexture2D target = LoadRenderTexture(sw, sh);
+    bool needsRedraw = false;
     Color backgroundColor = hexToRGBA(params.background);
     Color foregroundColor = hexToRGBA(params.foreground);
     std::stack<State> stack;
@@ -59,51 +61,59 @@ int main(int argc, char **argv)
             for (char ch : curr)
                 buffer += params.rules.contains(ch) ? params.rules.at(ch) : std::string{ch};
             curr = buffer;
+            needsRedraw = true;
         }
-        Vector2 pos{params.start_x, params.start_y};
-        float angle = params.start_angle;
-        BeginDrawing();
-        ClearBackground(backgroundColor);
-        for (char ch : curr)
+        if (needsRedraw)
         {
-            if (!params.variables.contains(ch))
-                continue;
-            Action result = params.variables[ch];
-            if (result == DRAW)
+            Vector2 pos{params.start_x, params.start_y};
+            float angle = params.start_angle;
+            BeginTextureMode(target);
+            ClearBackground(backgroundColor);
+            for (char ch : curr)
             {
-                Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
-                DrawLineV(pos, newPos, foregroundColor);
-                pos = newPos;
+                if (!params.variables.contains(ch))
+                    continue;
+                Action result = params.variables[ch];
+                if (result == DRAW)
+                {
+                    Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
+                    DrawLineV(pos, newPos, foregroundColor);
+                    pos = newPos;
+                }
+                else if (result == MOVE)
+                {
+                    Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
+                    pos = newPos;
+                }
+                else if (result == ACW)
+                {
+                    angle -= turn;
+                }
+                else if (result == CW)
+                {
+                    angle += turn;
+                }
+                else if (result == SAVE)
+                {
+                    stack.push({pos, angle});
+                }
+                else if (result == RESTORE)
+                {
+                    State result = stack.top();
+                    pos = result.pos;
+                    angle = result.angle;
+                    stack.pop();
+                }
+                else if (result == STAY)
+                {
+                    continue;
+                }
             }
-            else if (result == MOVE)
-            {
-                Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
-                pos = newPos;
-            }
-            else if (result == ACW)
-            {
-                angle -= turn;
-            }
-            else if (result == CW)
-            {
-                angle += turn;
-            }
-            else if (result == SAVE)
-            {
-                stack.push({pos, angle});
-            }
-            else if (result == RESTORE)
-            {
-                State result = stack.top();
-                pos = result.pos;
-                angle = result.angle;
-                stack.pop();
-            }
-            else if (result == STAY)
-            {
-                continue;
-            }
+            EndTextureMode();
+            needsRedraw = false;
         }
+        BeginDrawing();
+        DrawTextureRec(target.texture, {0, 0, sw, -sh}, {0, 0}, WHITE); // texture uses bottom-left as origin while screen uses top-left as origin so y-axis is flipped
         EndDrawing();
     }
     CloseWindow();
