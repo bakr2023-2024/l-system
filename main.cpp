@@ -14,6 +14,10 @@ int main(int argc, char **argv)
         return 1;
     }
     Parameters params{};
+    params.variables.emplace('+', CW);
+    params.variables.emplace('-', ACW);
+    params.variables.emplace('[', SAVE);
+    params.variables.emplace(']', RESTORE);
     if (!parse(argv[1], params))
     {
         std::cout << "File '" << argv[1] << "' doesn't exist";
@@ -30,10 +34,13 @@ int main(int argc, char **argv)
         note: we subtract L*cos(theta) from y since in pixel coordinates, y-axis moves down
     */
     float L = 20;
-    float turn = params.angle * M_PI / 180;
+    float turn = params.turn * M_PI / 180;
     std::string curr = params.axiom;
     float sw = 960.0f, sh = 720.0f;
+    params.start_x = sw / 2;
+    params.start_y = sh;
     InitWindow(sw, sh, "L-system");
+    std::stack<State> stack;
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ENTER))
@@ -44,25 +51,48 @@ int main(int argc, char **argv)
                 buffer += params.rules.contains(ch) ? params.rules.at(ch) : std::string{ch};
             curr = buffer;
         }
-        Vector2 pos{10, sh};
-        float angle = 0.0f;
+        Vector2 pos{params.start_x, params.start_y};
+        float angle = params.start_angle;
         BeginDrawing();
         ClearBackground(BLACK);
         for (char ch : curr)
         {
-            if (ch == 'F' || ch == 'G')
+            if (!params.variables.contains(ch))
+                continue;
+            Action result = params.variables[ch];
+            if (result == DRAW)
             {
                 Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
                 DrawLineV(pos, newPos, WHITE);
                 pos = newPos;
             }
-            else if (ch == '-')
+            else if (result == MOVE)
+            {
+                Vector2 newPos{pos.x - L * sinf(angle), pos.y - L * cosf(angle)};
+                pos = newPos;
+            }
+            else if (result == ACW)
             {
                 angle -= turn;
             }
-            else if (ch == '+')
+            else if (result == CW)
             {
                 angle += turn;
+            }
+            else if (result == SAVE)
+            {
+                stack.push({pos, angle});
+            }
+            else if (result == RESTORE)
+            {
+                State result = stack.top();
+                pos = result.pos;
+                angle = result.angle;
+                stack.pop();
+            }
+            else if (result == STAY)
+            {
+                continue;
             }
         }
         EndDrawing();
