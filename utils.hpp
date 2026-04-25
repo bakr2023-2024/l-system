@@ -41,6 +41,8 @@ struct Parameters
     float turn = 0.0f;
     float start_x = 0.0f, start_y = 0.0f;
     float start_angle = 0.0f;
+    float length = 20;
+    float scale = 0.75;
     unsigned long background = 0x000000ff;
     unsigned long foreground = 0xffffffff;
 };
@@ -105,6 +107,10 @@ bool parse(std::string filename, Parameters &params)
                         params.background = std::stoul(val, nullptr, 0);
                     else if (key == "foreground")
                         params.foreground = std::stoul(val, nullptr, 0);
+                    else if (key == "length")
+                        params.length = std::stof(val);
+                    else if (key == "scale")
+                        params.scale = std::stof(val);
                 }
             }
         }
