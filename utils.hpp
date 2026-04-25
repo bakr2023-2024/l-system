@@ -41,6 +41,8 @@ struct Parameters
     float turn = 0.0f;
     float start_x = 0.0f, start_y = 0.0f;
     float start_angle = 0.0f;
+    unsigned long background = 0x000000ff;
+    unsigned long foreground = 0xffffffff;
 };
 bool parse(std::string filename, Parameters &params)
 {
@@ -87,6 +89,22 @@ bool parse(std::string filename, Parameters &params)
                         params.start_x = std::stof(val);
                     else if (key == "start_y")
                         params.start_y = std::stof(val);
+                }
+            }
+        }
+        if (str == "[misc]")
+        {
+            while (std::getline(file, str) && !str.empty())
+            {
+                int delimIdx = str.find('=');
+                if (delimIdx != std::string::npos)
+                {
+                    std::string key = str.substr(0, delimIdx);
+                    std::string val = str.substr(delimIdx + 1);
+                    if (key == "background")
+                        params.background = std::stoul(val, nullptr, 0);
+                    else if (key == "foreground")
+                        params.foreground = std::stoul(val, nullptr, 0);
                 }
             }
         }
