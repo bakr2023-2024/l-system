@@ -83,10 +83,10 @@ Production rules of the form `A=...`. Each character on the left is replaced by 
 | Key           | Description                                                                 |
 |---------------|-----------------------------------------------------------------------------|
 | `axiom`       | The starting string for the L-system                                        |
-| `turn`        | Rotation amount in degrees applied by `CW`/`ACW`                           |
-| `start_x`     | Starting X position of the turtle in pixels                                 |
-| `start_y`     | Starting Y position of the turtle in pixels (origin is top-left)           |
-| `start_angle` | Initial angle of the turtle in degrees. 0° points up, 90° points right     |
+| `turn`        | Rotation amount in degrees applied by `CW`/`ACW`                            |
+| `start_x`     | Starting X position of the turtle in pixels (max 960px)                     |
+| `start_y`     | Starting Y position of the turtle in pixels (origin is top-left) (max 720px)|
+| `start_angle` | Initial angle of the turtle in degrees. 0° points up, 90° points right      |
 
 ---
 
