@@ -18,7 +18,7 @@ Press **Enter** to advance to the next generation.
 
 ## File Format
 
-Configuration files use an INI-like format with four sections: `[variables]`, `[rules]`, `[parameters]`, and `[misc]`. Sections can appear in any order, but the contents of each section must be followed by a blank line.
+Configuration files use an INI-like format with four sections: `[variables]`, `[rules]`, `[parameters]`, and `[misc]`. Sections must appear in the previous order, and the contents of each section must be followed by a blank line.
 
 ```ini
 [variables]
